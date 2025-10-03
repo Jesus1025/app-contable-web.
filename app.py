@@ -26,8 +26,7 @@ conn = get_connection()
 if conn is None:
     st.stop()
 
-# --- 3. CONFIGURACIÓN DE USUARIOS (VERSIÓN CORREGIDA) ---
-# Hashes para las contraseñas: 'bastian123', 'constanza123', 'jesus123'
+# --- 3. CONFIGURACIÓN DE USUARIOS ---
 config = {
     "credentials": {
         "usernames": {
@@ -49,6 +48,9 @@ config = {
         "name": "cookie_gestion_ventas_final",
         "key": "key_secreto_final_123",
         "expiry_days": 30
+    },
+    "preauthorized": {
+        "emails": []
     }
 }
 
@@ -56,7 +58,8 @@ authenticator = stauth.Authenticate(
     config['credentials'],
     config['cookie']['name'],
     config['cookie']['key'],
-    config['cookie']['expiry_days']
+    config['cookie']['expiry_days'],
+    config['preauthorized']
 )
 
 # --- 4. FUNCIONES DE LA APLICACIÓN ---
@@ -143,12 +146,12 @@ def generar_pdf(df_mes):
     buffer.seek(0)
     return buffer
 
-# --- 5. INTERFAZ DE USUARIO (VERSIÓN CORREGIDA) ---
-name, authentication_status, username = authenticator.login('Login', 'main')
+# --- 5. INTERFAZ DE USUARIO ---
+authenticator.login('Login', 'main')
 
-if authentication_status:
+if st.session_state["authentication_status"]:
     authenticator.logout('Cerrar Sesión', 'sidebar')
-    st.sidebar.title(f'Bienvenido, *{name}*')
+    st.sidebar.title(f'Bienvenido, *{st.session_state["name"]}*')
     
     st.title("Sistema de Gestión Contable 💼")
 
@@ -167,7 +170,7 @@ if authentication_status:
         submitted = st.form_submit_button("Registrar Venta")
         if submitted:
             tipo_negocio_code = '3d' if tipo_negocio == "Impresión 3D" else 'web'
-            if agregar_venta(documento_tipo, tipo_negocio_code, descripcion, monto_bruto, username):
+            if agregar_venta(documento_tipo, tipo_negocio_code, descripcion, monto_bruto, st.session_state["username"]):
                 st.success("¡Venta registrada con éxito!")
     
     st.markdown("---")
@@ -203,7 +206,7 @@ if authentication_status:
         else:
             st.info("No hay ventas registradas para eliminar.")
 
-elif authentication_status == False:
+elif st.session_state["authentication_status"] == False:
     st.error('Usuario o contraseña incorrecta')
-elif authentication_status is None:
+elif st.session_state["authentication_status"] is None:
     st.warning('Por favor, ingresa tus credenciales para continuar.')
