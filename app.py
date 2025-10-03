@@ -26,7 +26,7 @@ conn = get_connection()
 if conn is None:
     st.stop()
 
-# --- 3. CONFIGURACIÓN DE USUARIOS (VERSIÓN CORREGIDA) ---
+# --- 3. CONFIGURACIÓN DE USUARIOS ---
 config = {
     "credentials": {
         "usernames": {
@@ -142,11 +142,11 @@ def generar_pdf(df_mes):
     buffer.seek(0)
     return buffer
 
-# --- 5. INTERFAZ DE USUARIO ---
-authenticator.login('Login', 'main')
+# --- 5. INTERFAZ DE USUARIO (LA LÍNEA CORREGIDA) ---
+authenticator.login() # <-- ¡ESTA ES LA LÍNEA CORREGIDA!
 
 if st.session_state["authentication_status"]:
-    authenticator.logout('Cerrar Sesión', 'sidebar')
+    authenticator.logout('Cerrar Sesión', location='sidebar') # Se agrega 'location'
     st.sidebar.title(f'Bienvenido, *{st.session_state["name"]}*')
     
     st.title("Sistema de Gestión Contable 💼")
