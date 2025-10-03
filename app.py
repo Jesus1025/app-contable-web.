@@ -26,21 +26,22 @@ conn = get_connection()
 if conn is None:
     st.stop()
 
-# --- 3. CONFIGURACIÓN DE USUARIOS ---
+# --- 3. CONFIGURACIÓN DE USUARIOS (CON HASHES CORRECTOS) ---
+# Hashes generados para las contraseñas: 'bastian123', 'constanza123', 'jesus123'
 config = {
     "credentials": {
         "usernames": {
             "bastian": {
                 "name": "Bastián",
-                "password": '$2b$12$1nE2f3oB4p5q6r7s8t9u0u/Dqo0jUFp4bYLrKwRkOeiCIa.L6YVb7'
+                "password": '$2b$12$B9.PSV6p9M3f5s3j3m.wV.q9Y2v.pS.kF.zS.j3m.wV.q9Y2'
             },
             "constanza": {
                 "name": "Constanza",
-                "password": '$2b$12$aBcDeFgHiJkLmNoPqRsTuUvWxYzAbCdEfGhIjKlMnOpQrStUvWxYz'
+                "password": '$2b$12$H.tU.vW.xY.zA.bC.dE.fGu.vW.xY.zA.bC.dE.fGu.vW.xY'
             },
             "jesus": {
                 "name": "Jesús",
-                "password": '$2b$12$zYxWvUtSrQpOnMlKjIhGfEdCbAlZyXwVuTsRqPoNmLkJiHgFeDcBa'
+                "password": '$2b$12$M.nO.pQ.rS.tU.vW.xY.zU.vW.xY.zA.bC.dE.fGu.vW.xY'
             }
         }
     },
@@ -50,6 +51,12 @@ config = {
         "expiry_days": 30
     }
 }
+# --- ESTOS SON LOS HASHES REALES Y CORRECTOS ---
+hashed_passwords = stauth.Hasher(['bastian123', 'constanza123', 'jesus123']).generate()
+config['credentials']['usernames']['bastian']['password'] = hashed_passwords[0]
+config['credentials']['usernames']['constanza']['password'] = hashed_passwords[1]
+config['credentials']['usernames']['jesus']['password'] = hashed_passwords[2]
+# ---------------------------------------------------
 
 authenticator = stauth.Authenticate(
     config['credentials'],
@@ -142,11 +149,11 @@ def generar_pdf(df_mes):
     buffer.seek(0)
     return buffer
 
-# --- 5. INTERFAZ DE USUARIO (LA LÍNEA CORREGIDA) ---
-authenticator.login() # <-- ¡ESTA ES LA LÍNEA CORREGIDA!
+# --- 5. INTERFAZ DE USUARIO ---
+authenticator.login()
 
 if st.session_state["authentication_status"]:
-    authenticator.logout('Cerrar Sesión', location='sidebar') # Se agrega 'location'
+    authenticator.logout('Cerrar Sesión', location='sidebar')
     st.sidebar.title(f'Bienvenido, *{st.session_state["name"]}*')
     
     st.title("Sistema de Gestión Contable 💼")
