@@ -26,7 +26,7 @@ conn = get_connection()
 if conn is None:
     st.stop()
 
-# --- 3. CONFIGURACIÓN DE USUARIOS ---
+# --- 3. CONFIGURACIÓN DE USUARIOS (VERSIÓN CORREGIDA) ---
 config = {
     "credentials": {
         "usernames": {
@@ -48,9 +48,6 @@ config = {
         "name": "cookie_gestion_ventas_final",
         "key": "key_secreto_final_123",
         "expiry_days": 30
-    },
-    "preauthorized": {
-        "emails": []
     }
 }
 
@@ -58,8 +55,7 @@ authenticator = stauth.Authenticate(
     config['credentials'],
     config['cookie']['name'],
     config['cookie']['key'],
-    config['cookie']['expiry_days'],
-    config['preauthorized']
+    config['cookie']['expiry_days']
 )
 
 # --- 4. FUNCIONES DE LA APLICACIÓN ---
